@@ -24,6 +24,7 @@ module.exports.createReview = asyncHandler(async (req, res) => {
     rating: req.body.rating,
     comment: req.body.comment,
   })
+  await review.save();
   res.status(201).json(review);
 })
 
@@ -31,7 +32,7 @@ module.exports.createReview = asyncHandler(async (req, res) => {
  * @desc Get All Reviews
  * @route /api/review
  * @method GET
- * @access private (only admin)
+ * @access public
  */
 module.exports.getAllReviews= asyncHandler(async(req,res) =>{
     const review = await Review.find().populate("userId" ,"name email")

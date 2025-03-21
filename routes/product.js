@@ -28,12 +28,12 @@
   router
     .route("/")
     .get(getAllProduct) // Uncomment if needed
-    .post(photoUpload.single("image"), createPoduct);
+    .post(verifyAdmin,photoUpload.single("image"), createPoduct);
 
   router
     .route("/:id")
     .get(validId,getProductById)
-    .put(photoUpload.single("image"), updateProduct)
+    .put(verifyAdmin,photoUpload.single("image"), updateProduct)
     .delete(verifyAdmin, deleteProduct);
 
   router.route("/").get(getProductByFilter);
