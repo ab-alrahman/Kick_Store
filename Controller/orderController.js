@@ -48,6 +48,33 @@ module.exports.getAllOrder = asyncHandler(async (req, res) => {
 
 
 /**
+ * @desc Get Order By ID
+ * @route /api/order/:id
+ * @method GET
+ * @access private (only admin)
+ */
+module.exports.getOrderById = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id).lean();
+    if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+    }
+
+    const [user, product] = await Promise.all([
+        User.findOne({ customerName: order.customerName }).lean(),
+        Product.findById(order.product).lean()
+    ]);
+
+    res.status(200).json({
+        success: true,
+        data: {
+            order,
+            product: product || null,
+            user: user || null
+        }
+    });
+});
+
+/**
  * @desc Update Order
  * @route /api/order/:id
  * @method PUT

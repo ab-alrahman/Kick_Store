@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema({
     },
     customerName : {
         type : String ,
-        ref :  "user"
+        ref :  "User"
     },
     status : {
         type : String ,
