@@ -2,6 +2,12 @@ const asyncHandler = require("express-async-handler");
 const { User } = require("../Models/User")
 const { Product } = require("../Models/Product");
 const { validateCreateReview, Review, validateUpdateReview } = require("../Models/Review");
+const {
+  cloudinaryUploudImage,
+  cloudinaryRemoveImage,
+} = require("../utils/cloudinary");
+const path = require("path");
+const fs = require("fs");
 
 /**
  * @desc Create New Review
@@ -11,22 +17,43 @@ const { validateCreateReview, Review, validateUpdateReview } = require("../Model
  */
 
 module.exports.createReview = asyncHandler(async (req, res) => {
-  const {error } = validateCreateReview(req.body)
+  const { error } = validateCreateReview(req.body);
   if(error) {
-    return res.status(400).json({message : error.details[0].message})
+    return res.status(400).json({message: error.details[0].message});
   }
-  const product = await Product.findById(req.body.product)
-  const user = await User.findById(req.user.id)
 
-  const review = new Review({
-    productId: product.id,
-    userId: user.id,
+  const imagePath = path.join(__dirname, `../images/${req.file.filename}`);
+  const result = await cloudinaryUploudImage(imagePath);
+
+  const product = await Product.findById(req.body.productId);
+  if(!product) {
+    return res.status(404).json({message: "Product not found"});
+  }
+
+  const user = await User.findById(req.body.userId);
+  if(!user) {
+    return res.status(404).json({message: "User not found"});
+  }
+
+  const review = await Review.create({
+    productId: product._id,
+    userId: user._id,
     rating: req.body.rating,
     comment: req.body.comment,
-  })
-  await review.save();
-  res.status(201).json(review);
-})
+    image: {
+      url: result.secure_url,
+      publicId: result.public_id,
+  } || null,
+  });
+
+  res.status(201).json({
+    review: {
+      fullName: user.firstName + " " + user.lastName,
+      productName: product.name,
+      review
+  }});
+  fs.unlinkSync(imagePath);
+});
 
 /**
  * @desc Get All Reviews
@@ -55,10 +82,16 @@ module.exports.updateReview = asyncHandler(async (req, res) => {
     if (!review) {
         return res.status(404).json({ message: "Review not found" });
   }
+  const imagePath = path.join(__dirname, `../images/${req.file.filename}`);
+  const result = await cloudinaryUploudImage(imagePath);
   const updatedreview = await Review.findByIdAndUpdate(req.params.id , {
     $set : {
     comment : req.body.comment,
-    rating : req.body.rating
+      rating: req.body.rating,
+      image: {
+        url: result.secure_url,
+        publicId: result.public_id,
+    },
     }
 },{new:true});
 res.status(200).json(updatedreview);

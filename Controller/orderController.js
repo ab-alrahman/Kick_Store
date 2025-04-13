@@ -20,7 +20,7 @@ module.exports.createOrder = asyncHandler(async(req,res) =>{
     
     // console.log(req.body.product)
     const order = await Order.create({
-        product : req.body.product,
+        product : product.id,
         payMethod : req.body.payMethod,
         customerName : user.firstName ,
         amount : req.body.amount ,
@@ -35,9 +35,15 @@ res.status(201).json(order)
  * @method GET
  * @access private (only admin)
  */
-module.exports.getAllOrder= asyncHandler(async(req,res) =>{
-    const order = await Order.find().populate("product" ,["name"])
-res.status(200).json(order)
+module.exports.getAllOrder = asyncHandler(async (req, res) => {
+    const product = await Product.findById(req.body.product)
+    const order = await Order.find()
+    res.status(200).json({
+    details: {
+        product: product,
+        order : order
+    }
+})
 })
 
 
@@ -127,5 +133,16 @@ module.exports.updateStatu =asyncHandler(async(req ,res) =>{
 module.exports.getOrderCount =asyncHandler(async(req ,res) =>{
     const count = await Order.countDocuments()
     res.status(200).json(count)
-    
+})
+
+/**
+ * @desc Get Order By status 
+ * @route /api/order/status
+ * @method GET
+ * @access private (only admim)
+ */
+
+module.exports.getOrderStatus =asyncHandler(async(req ,res) =>{
+    const status = await Order.findOne({status: req.params.status})
+    res.status(200).json(status)
 })

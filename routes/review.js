@@ -9,11 +9,11 @@ const {
   updateReview
 } = require("../Controller/reviewController");
 
-const { verifyUser, verifyAuthorization } = require("../middlewares/verifyToken");
+const { verifyToken,verifyUser, verifyAuthorization } = require("../middlewares/verifyToken");
 
 router.get("/", getAllReviews);
 
-router.post("/", verifyUser, createReview);
+router.post("/", verifyToken, createReview);
 
 router.get("/count", getreviewCount);
 
@@ -21,4 +21,4 @@ router.put("/:id", verifyAuthorization, updateReview);
 
 router.delete("/:id", verifyAuthorization, deleteReview);
 
-module.exports = router;
+module.exports = router; 

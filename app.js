@@ -2,7 +2,9 @@ const express = require("express")
 const morgan = require("morgan");
 const { notFound ,errorHandler} = require("./middlewares/Error")
 const cors = require("cors")
-const connectToDb= require("./config/connectToDb")
+const connectToDb = require("./config/connectToDb")
+const landingController = require('./Controller/landingController');
+const listingController = require('./Controller/listingController');
 require("dotenv").config()
 connectToDb();
 
@@ -12,11 +14,14 @@ const app = express()
 
 //Cors Policy
 app.use(cors())
+app.set('view engine', 'ejs');
 
 //Apply Middlewares    
 app.use(express.json())
 app.use(morgan('dev'))
 
+// app.use('/api/landing', landingController);
+// app.use('/api/listing', listingController);
 app.use("/api/auth",require("./routes/auth"))
 app.use("/api/product",require("./routes/product"))
 app.use("/api/password",require("./routes/password"))

@@ -6,6 +6,12 @@ const {
   validateRegisterUser,
   validateLoginUser,
 } = require("../Models/User");
+const {
+  cloudinaryUploudImage,
+  cloudinaryRemoveImage,
+} = require("../utils/cloudinary");
+const path = require("path");
+const fs = require("fs");
 
 /**
  * @desc Register New User
@@ -15,10 +21,17 @@ const {
  */
 
 module.exports.register = asyncHandler(async (req, res) => {
+
+    if (!req.file) {
+      res.status(404).json({ message: "no image provided" });
+  }
+  
   const { error } = validateRegisterUser(req.body);
   if (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    return res.status(400).json({ message: error.details[0].message }); 
   }
+    const imagePath = path.join(__dirname, `../images/${req.file.filename}`);
+    const result = await cloudinaryUploudImage(imagePath);
 
   let user = await User.findOne({ email: req.body.email });
   if (user) {
@@ -33,7 +46,12 @@ module.exports.register = asyncHandler(async (req, res) => {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     password: req.body.password,
-    isAdmin: req.body.isAdmin || false, // Set isAdmin, default to false if not provided
+    isAdmin: req.body.isAdmin || false,
+    phone: req.body.phone, 
+    image: {
+      url: result.secure_url,
+      publicId: result.public_id,
+  } || null,
   });
   await user.save();
 
@@ -43,11 +61,14 @@ module.exports.register = asyncHandler(async (req, res) => {
     firstName: user.firstName,
     lastName: user.lastName,
     isAdmin: user.isAdmin,
+    phone: req.body.phone,
+    image: user.image,
     token: jwt.sign(
       { id: user._id, isAdmin: user.isAdmin, firstName: user.firstName },
       process.env.JWT_SECRET
     ),
   });
+    fs.unlinkSync(imagePath);
 });
 
 /**

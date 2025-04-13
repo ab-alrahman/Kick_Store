@@ -30,7 +30,7 @@ function verifyAdmin(req, res, next) {
 
 function verifyUser(req, res, next) {
   verifyToken(req, res, () => {
-    if (req.user.id === req.params.id) {
+    if (req.user.id === req.headers.authorization.split(" ")[1]) {
       next();
     } else {
       return res.status(403).json({ message: "Not allowed, only the user" });

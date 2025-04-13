@@ -16,14 +16,13 @@ const updateUser = asyncHandler(async(req,res)=>{
     if(error){
         return res.status(400).json({message : error.details[0].message})
     }
-    console.log(req.headers)
     if(req.body.password){
         const salt = await bcrypt.genSalt(10)
         req.body.password =await bcrypt.hash(req.body.password , salt)
     }
     const updateduser = await User.findByIdAndUpdate(req.params.id,{
         $set : {
-            email : req.body.email,
+            phone : req.body.phone,
             firstName : req.body.firstName,
             lastName : req.body.lastName
         }
@@ -64,7 +63,7 @@ const getUserByID = asyncHandler(async(req,res)=>{
  * @access private (Only admin & him self)
  */
 const deleteUser = asyncHandler(async(req,res)=>{
-    const users = await User.findById(req.params.id).select("-password")
+    const users = await User.findById(req.params.id)
     if (users) {
         await User.findByIdAndDelete(req.params.id)
         res.status(200).json({message:"user has been deleted successfully"})

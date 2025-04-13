@@ -4,11 +4,15 @@ const mongoose = require("mongoose");
 const reviewSchema = new mongoose.Schema({
   userId:
     {
-      type: mongoose.Schema.Types.ObjectId, ref: "User"
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required:true
     },
   productId:
     {
-      type: mongoose.Schema.Types.ObjectId, ref: "Product"
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required:true
     },
     rating:
     {
@@ -20,12 +24,14 @@ const reviewSchema = new mongoose.Schema({
     comment:
     {
       type:String,
+  },
+  image: {
+    type: Object,
+    default: {
+      url: "",
+      publicId: null,
     },
-    createAt:
-    {
-      type:Date,
-      default:Date.now
-    }
+  }
 },{
   timestamps:true
 })
@@ -34,6 +40,8 @@ const Review = mongoose.model('reviews',reviewSchema)
 
 function validateCreateReview(obj) {
   const schema = Joi.object({
+    userId: Joi.string().required(),
+    productId: Joi.string().required(),
     rating: Joi.number().min(1).max(5).required(),
     comment: Joi.string(),
   })
@@ -41,7 +49,8 @@ function validateCreateReview(obj) {
 }
 function validateUpdateReview(obj) {
   const schema = Joi.object({
-    rating: Joi.number().min(1).max(5).required(),
+    productId: Joi.string().required(),
+    rating: Joi.number().min(1).max(5),
     comment: Joi.string(),
   })
   return schema.validate(obj)

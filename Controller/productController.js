@@ -171,8 +171,8 @@ module.exports.updateProduct = asyncHandler(async (req, res) => {
     salePrice: req.body.salePrice,
     stockQuantity: req.body.stockQuantity,
     SKU: req.body.SKU,
-    size: req.body.size, // Add this
-    color: req.body.color, // And this
+    size: req.body.size, 
+    color: req.body.color,
   };
 
   if (req.file) {
