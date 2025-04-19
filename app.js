@@ -3,8 +3,8 @@ const morgan = require("morgan");
 const { notFound ,errorHandler} = require("./middlewares/Error")
 const cors = require("cors")
 const connectToDb = require("./config/connectToDb")
-const landingController = require('./Controller/landingController');
-const listingController = require('./Controller/listingController');
+// const landingController = require('./Controller/landingController');
+// const listingController = require('./Controller/listingController');
 require("dotenv").config()
 connectToDb();
 
@@ -14,7 +14,7 @@ const app = express()
 
 //Cors Policy
 app.use(cors())
-app.set('view engine', 'ejs');
+// app.set('view engine', 'ejs');
 
 //Apply Middlewares    
 app.use(express.json())
@@ -28,7 +28,10 @@ app.use("/api/password",require("./routes/password"))
 app.use("/api/category",require("./routes/category"))
 app.use("/api/user",require("./routes/user"))
 app.use("/api/order", require("./routes/order"))
-app.use("/api/review",require("./routes/review"))
+app.use("/api/review", require("./routes/review"))
+app.use("/api/cart", require("./routes/cart"))
+app.use("/api/checkout", require("./routes/checkOut"))
+
 
 
 // Error Handler middlewares

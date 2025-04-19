@@ -12,6 +12,7 @@ const {
 } = require("../utils/cloudinary");
 const path = require("path");
 const fs = require("fs");
+const generateToken = require("../utils/token");
 
 /**
  * @desc Register New User
@@ -63,10 +64,6 @@ module.exports.register = asyncHandler(async (req, res) => {
     isAdmin: user.isAdmin,
     phone: req.body.phone,
     image: user.image,
-    token: jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin, firstName: user.firstName },
-      process.env.JWT_SECRET
-    ),
   });
     fs.unlinkSync(imagePath);
 });
@@ -96,10 +93,7 @@ module.exports.login = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid email or password" });
   }
 
-  const token = jwt.sign(
-    { id: user._id, isAdmin: user.isAdmin, firstName: user.firstName },
-    process.env.JWT_SECRET
-  );
+  const token = generateToken(user);
   res.status(200).json({
     _id: user._id,
     email: user.email,
