@@ -9,3 +9,15 @@ router.post("/register",photoUpload.single('image'),register)
 // /api/auth/login
 router.post("/login",login)  
 module.exports = router
+
+/*
+    show product > add product 
+    cart > checkout > order > payment + info > create order {
+    payment 
+    user
+    cartId
+    }
+
+
+
+*/

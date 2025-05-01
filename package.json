@@ -4,13 +4,13 @@
   "description": "backend of kicks",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app"
+    "dev": "nodemon app"
   },
   "author": "tasneem && abd albiek",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "cloudinary": "^1.28.1",
+    "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
